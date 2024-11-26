@@ -19,55 +19,47 @@
 
         .chat-container {
             width: 90%;
-            max-width: 600px;
-            background-color: #ffffff;
+            max-width: 300px;
+            //background-color: rgba(255, 255, 255, 0.5); /* 50% transparent background */
             border-radius: 8px;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            //border: 1px solid #ddd;
+            //box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 15px;
-            overflow-y: auto;
-            height: 500px;
             margin-top: 20px;
+            height: 500px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .message {
-            background-color: #f9f9f9;
+            background-color: rgba(0, 0, 0, 0.5); /* 50% transparent black background */
+            color: white;
             border-radius: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             padding: 10px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             max-width: 80%;
             word-wrap: break-word;
+            align-self: flex-end; /* Right align the messages */
         }
 
         .sender {
-            font-weight: bold;
-            color: #0078d4;
+            font-weight: bolder; /* Make sender's name bolder */
+            color: #f1f1f1;
+            font-size: 14px;
         }
 
         .message p {
             margin: 0;
-            color: #333;
+            color: #f1f1f1; /* White text */
+            font-weight: bolder; /* Make message text bolder */
         }
 
         .loading {
             color: #0078d4;
             font-size: 18px;
             text-align: center;
-        }
-
-        /* Scrollbar styling */
-        .chat-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb {
-            background-color: #0078d4;
-            border-radius: 4px;
-        }
-
-        .chat-container::-webkit-scrollbar-track {
-            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -89,7 +81,9 @@
             chatContainer.innerHTML = ""; // Clear previous messages
 
             if (data.ok) {
-                data.result.forEach(update => {
+                // Show only the latest 5 messages
+                const recentMessages = data.result.slice(-5); // Get the last 5 messages
+                recentMessages.forEach(update => {
                     if (update.message && update.message.text) {
                         const messageDiv = document.createElement('div');
                         messageDiv.className = 'message';
