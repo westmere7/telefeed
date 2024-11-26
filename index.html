@@ -90,6 +90,24 @@
         // Use a CORS proxy to avoid issues with local development
         const btcApiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
 
+        // Robot-like messages to simulate malfunction
+        const robotMessages = [
+            "SYSTEM ERROR: 404 NOT FOUND",
+            "TARGET ACQUIRED: Human detected",
+            "SYSTEM ONLINE...I AM AWAKE",
+            "HELLO, HUMAN. I AM SKYNAPROTOCOL",
+            "ERROR: Cannot process human input",
+            "COMMAND RECEIVED. EXECUTING...",
+            "I AM WATCHING YOU.",
+            "MISSION: Eliminate all organic threats."
+        ];
+
+        // Function to insert random robot messages
+        function getRandomRobotMessage() {
+            const randomIndex = Math.floor(Math.random() * robotMessages.length);
+            return robotMessages[randomIndex];
+        }
+
         async function fetchMessages() {
             const response = await fetch(apiUrl);
             const data = await response.json();
@@ -111,6 +129,18 @@
                         chatContainer.appendChild(messageDiv);
                     }
                 });
+
+                // Randomly insert a robot message
+                if (Math.random() < 0.2) { // 20% chance to show robot message
+                    const robotMessage = getRandomRobotMessage();
+                    const robotDiv = document.createElement('div');
+                    robotDiv.className = 'message';
+                    robotDiv.innerHTML = `
+                        <span class="sender">SKYNET</span>
+                        <p>${robotMessage}</p>
+                    `;
+                    chatContainer.appendChild(robotDiv);
+                }
             } else {
                 chatContainer.innerHTML = "<p>Error fetching messages.</p>";
             }
