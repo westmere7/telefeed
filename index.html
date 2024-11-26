@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Chat</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            overflow-y: auto;
+            height: 500px;
+            margin-top: 20px;
+        }
+
+        .message {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            padding: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .sender {
+            font-weight: bold;
+            color: #0078d4;
+        }
+
+        .message p {
+            margin: 0;
+            color: #333;
+        }
+
+        .loading {
+            color: #0078d4;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        /* Scrollbar styling */
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #0078d4;
+            border-radius: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="loading">Loading messages...</div>
+    </div>
+
+    <script>
+        const botToken = '7692572018:AAFf7aGtLikjQsaWbzAPCxzk_QnAoASHIYg'; // Replace with your bot token
+        const apiUrl = `https://api.telegram.org/bot${botToken}/getUpdates`;
+
+        async function fetchMessages() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = ""; // Clear previous messages
+
+            if (data.ok) {
+                data.result.forEach(update => {
+                    if (update.message && update.message.text) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message';
+                        messageDiv.innerHTML = `
+                            <span class="sender">${update.message.from.first_name}</span>
+                            <p>${update.message.text}</p>
+                        `;
+                        chatContainer.appendChild(messageDiv);
+                    }
+                });
+            } else {
+                chatContainer.innerHTML = "<p>Error fetching messages.</p>";
+            }
+        }
+
+        // Fetch messages every 2 seconds
+        setInterval(fetchMessages, 2000);
+        fetchMessages();
+    </script>
+
+</body>
+</html>
