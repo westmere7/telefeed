@@ -87,7 +87,8 @@
         const botToken = '7692572018:AAFf7aGtLikjQsaWbzAPCxzk_QnAoASHIYg'; // Replace with your bot token
         const apiUrl = `https://api.telegram.org/bot${botToken}/getUpdates`;
 
-        const btcApiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'; // CoinGecko API to fetch BTC price in USD
+        // Use a CORS proxy to avoid issues with local development
+        const btcApiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
 
         async function fetchMessages() {
             const response = await fetch(apiUrl);
@@ -120,8 +121,9 @@
                 const response = await fetch(btcApiUrl);
                 const data = await response.json();
 
-                if (data.bitcoin && data.bitcoin.usd) {
-                    const btcPriceInUSD = data.bitcoin.usd;
+                if (data.contents) {
+                    const btcPrice = JSON.parse(data.contents);
+                    const btcPriceInUSD = btcPrice.bitcoin.usd;
                     document.getElementById('btcPriceContainer').textContent = `BTC Price: $${btcPriceInUSD.toLocaleString()}`;
                 } else {
                     document.getElementById('btcPriceContainer').textContent = "Failed to fetch BTC price";
