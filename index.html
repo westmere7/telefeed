@@ -17,13 +17,22 @@
             flex-direction: column;
         }
 
+        .price-container {
+            background-color: #FFD700; /* Gold color for price */
+            color: black;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 90%;
+            max-width: 300px;
+            text-align: center;
+        }
+
         .chat-container {
             width: 90%;
             max-width: 300px;
-            //background-color: rgba(255, 255, 255, 0.5); /* 50% transparent background */
-            border-radius: 8px;
-            //border: 1px solid #ddd;
-            //box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 15px;
             margin-top: 20px;
             height: 500px;
@@ -65,6 +74,11 @@
 </head>
 <body>
 
+    <!-- Price Container for BTC Price -->
+    <div class="price-container" id="btcPriceContainer">
+        Loading BTC Price...
+    </div>
+
     <div class="chat-container" id="chatContainer">
         <div class="loading">Loading messages...</div>
     </div>
@@ -72,6 +86,8 @@
     <script>
         const botToken = '7692572018:AAFf7aGtLikjQsaWbzAPCxzk_QnAoASHIYg'; // Replace with your bot token
         const apiUrl = `https://api.telegram.org/bot${botToken}/getUpdates`;
+
+        const btcApiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'; // CoinGecko API to fetch BTC price in USD
 
         async function fetchMessages() {
             const response = await fetch(apiUrl);
@@ -99,9 +115,29 @@
             }
         }
 
+        async function fetchBTCPrice() {
+            try {
+                const response = await fetch(btcApiUrl);
+                const data = await response.json();
+
+                if (data.bitcoin && data.bitcoin.usd) {
+                    const btcPriceInUSD = data.bitcoin.usd;
+                    document.getElementById('btcPriceContainer').textContent = `BTC Price: $${btcPriceInUSD.toLocaleString()}`;
+                } else {
+                    document.getElementById('btcPriceContainer').textContent = "Failed to fetch BTC price";
+                }
+            } catch (error) {
+                document.getElementById('btcPriceContainer').textContent = "Error fetching BTC price";
+            }
+        }
+
         // Fetch messages every 2 seconds
         setInterval(fetchMessages, 2000);
         fetchMessages();
+
+        // Fetch BTC price every 5 seconds
+        setInterval(fetchBTCPrice, 5000);
+        fetchBTCPrice();
     </script>
 
 </body>
